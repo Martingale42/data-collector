@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  data-collector:
+    build:
+      context: .
+      dockerfile: docker/data-collector.dockerfile
+    container_name: nautilus-data-collector
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
