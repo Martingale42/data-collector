@@ -9,6 +9,8 @@ services:
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
+      - ./src:/app/src
+      - ./main.py:/app/main.py
       - ./.env:/app/.env
     restart: unless-stopped
     logging:

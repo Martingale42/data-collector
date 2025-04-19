@@ -21,7 +21,6 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 複製應用代碼
 COPY pyproject.toml /app/
-COPY main.py /app/
 
 # 使用 uv 安裝 Python 依賴
 RUN uv sync --all-extras

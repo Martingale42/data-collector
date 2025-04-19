@@ -22,7 +22,7 @@ from nautilus_trader.persistence.catalog.parquet import ParquetDataCatalog
 from nautilus_trader.persistence.catalog.types import CatalogWriteMode
 
 
-class BinanceDataStreamerConfig(ActorConfig):
+class BinanceDataCollectorConfig(ActorConfig):
     """
     Binance數據串流配置類。
 
@@ -34,7 +34,7 @@ class BinanceDataStreamerConfig(ActorConfig):
     catalog_path: str  # Parquet目錄的儲存路徑
 
 
-class BinanceDataStreamer(Actor):
+class BinanceDataCollector(Actor):
     """
     從Binance串流數據並寫入ParquetDataCatalog的Actor。
 
@@ -42,7 +42,7 @@ class BinanceDataStreamer(Actor):
     並將接收到的數據寫入Parquet目錄格式。
     """
 
-    def __init__(self, config: BinanceDataStreamerConfig) -> None:
+    def __init__(self, config: BinanceDataCollectorConfig) -> None:
         """
         初始化Binance數據串流Actor。
         """
@@ -92,7 +92,13 @@ class BinanceDataStreamer(Actor):
             self.subscribe_instrument(
                 instrument_id=instrument_id,
             )
-
+            instrument = self.cache.instrument(instrument_id)
+            self.data_catalog.write_data(
+                [instrument],
+                basename_template=f"{instrument_id}",
+                mode=CatalogWriteMode.NEWFILE,
+            )
+            self.log.info(f"已寫入交易對信息: {instrument.id}")
             # 訂閱報價數據
             self.subscribe_quote_ticks(
                 instrument_id=instrument_id,
